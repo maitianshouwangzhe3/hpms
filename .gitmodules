@@ -1,0 +1,6 @@
+[submodule "deps/jemalloc"]
+	path = deps/jemalloc
+	url = https://github.com/jemalloc/jemalloc.git
+[submodule "deps/luajit2"]
+	path = deps/luajit2
+	url = https://github.com/openresty/luajit2.git

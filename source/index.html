@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HPMS 项目介绍</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #666;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>HPMS 项目介绍</h1>
+
+    <h2>项目概述</h2>
+    <p>HPMS 是一个包含多种功能的项目，涉及核心代码、依赖库、示例代码等多个部分。</p>
+
+    <h2>项目架构</h2>
+    <p>以下是项目的架构图：</p>
+    <img src="./source/hpms.png" alt="项目架构图">
+
+    <h2>依赖库</h2>
+    <ul>
+        <li>Jemalloc: 高性能内存分配器</li>
+        <li>LuaJIT2: Lua 语言的即时编译器</li>
+    </ul>
+
+    <h2>示例代码</h2>
+    <p>项目中包含多个示例代码，例如：</p>
+    <ul>
+        <li><a href="./example/echo-cli.lua">echo-cli.lua</a>: 客户端示例</li>
+        <li><a href="./example/echo-srv.lua">echo-srv.lua</a>: 服务器示例</li>
+        <li><a href="./example/webserver.lua">webserver.lua</a>: Web 服务器示例</li>
+    </ul>
+
+    <h2>核心代码</h2>
+    <p>核心代码位于 <code>core/</code> 目录下，包含多个 C 文件和头文件，例如：</p>
+    <ul>
+        <li><code>ae.c</code> 和 <code>ae.h</code>: 事件循环相关代码</li>
+        <li><code>anet.c</code> 和 <code>anet.h</code>: 网络相关代码</li>
+        <li><code>buffer.c</code> 和 <code>buffer.h</code>: 缓冲区相关代码</li>
+    </ul>
+
+    <h2>测试代码</h2>
+    <p>项目中包含多个测试代码，位于 <code>test/</code> 目录下，例如：</p>
+    <ul>
+        <li><a href="./test/test_connect_pool_cli.lua">test_connect_pool_cli.lua</a>: 连接池客户端测试</li>
+        <li><a href="./test/test_connect_pool_srv.lua">test_connect_pool_srv.lua</a>: 连接池服务器测试</li>
+    </ul>
+</body>
+</html>
