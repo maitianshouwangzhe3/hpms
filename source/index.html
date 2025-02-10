@@ -1,25 +1,26 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>HPMS 项目介绍</title>
-    <meta charset="utf-8">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h1 {
-            color: #333;
-        }
-        h2 {
-            color: #666;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-    </style>
-</head>
+    <head>
+        <title>HPMS 项目介绍</title>
+        <meta charset="utf-8">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+            h1 {
+                color: #333;
+            }
+            h2 {
+                color: #666;
+            }
+            img {
+                max-width: 100%;
+                height: auto;
+                margin-bottom: 20px;
+            }
+        </style>
+    </head>
 <body>
     <h1>HPMS 项目介绍</h1>
 
@@ -58,5 +59,11 @@
         <li><a href="./test/test_connect_pool_cli.lua">test_connect_pool_cli.lua</a>: 连接池客户端测试</li>
         <li><a href="./test/test_connect_pool_srv.lua">test_connect_pool_srv.lua</a>: 连接池服务器测试</li>
     </ul>
+
+    <h2>压力测试</h2>
+    <p>wrk页面请求性能测试结果:</p>
+    <img src="./source/test1.png" alt="页面访问">
+    <p>wrk资源请求性能测试结果:</p>
+    <img src="./source/test2.png" alt="资源请求">
 </body>
 </html>

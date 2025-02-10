@@ -85,6 +85,24 @@ local function client_loop(fd)
                 local body = file:read("*all")
                 file:close()
                 response(fd, interface.write, 200, body)
+            elseif url == "/source/test1.png" then
+                file, err = io.open("./source/test1.png")
+                if not file then
+                    print(err)
+                return
+                end
+                local body = file:read("*all")
+                file:close()
+                response(fd, interface.write, 200, body)
+            elseif url == "/source/test2.png" then
+                file, err = io.open("./source/test2.png")
+                if not file then
+                    print(err)
+                return
+                end
+                local body = file:read("*all")
+                file:close()
+                response(fd, interface.write, 200, body)
             else
                 response(fd, interface.write, 200, "Not Found")
             end
