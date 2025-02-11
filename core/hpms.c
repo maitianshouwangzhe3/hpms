@@ -15,7 +15,7 @@ typedef struct {
     size_t mem_level;
 } lstate_t;
 
-const size_t MEMLVL = 2097152; // 2M
+const size_t MEMLVL = 20971520; // 20M
 const size_t MEM_1MB = 1048576; // 1M
 
 static int

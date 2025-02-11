@@ -9,6 +9,17 @@ local sockethelper = require "http.sockethelper"
 local urllib = require "http.url"
 local table = table
 local string = string
+local source = {}
+local files = {"./source/index.html", 
+               "./source/hpms.png", 
+               "./source/test1.png", 
+               "./source/test2.png",
+               "./source/hpms_logo.png",
+               "./example/echo-cli.lua",
+               "./example/echo-srv.lua",
+               "./example/webserver.lua",
+               "./test/test_connect_pool_cli.lua",
+               "./test/test_connect_pool_srv.lua",}
 
 if ENABLE_TLS then
     local c = require "ltls.init.c"
@@ -56,52 +67,41 @@ local function response(id, write, ...)
 	end
 end
 
+local function init_source()
+    for _, path in ipairs(files) do
+        local file, err = io.open(path)
+        if not file then
+            print(err)
+        end
+        local body = file:read("*all")
+        file:close()
+        
+        local key = string.sub(path, 2)
+        if key == "/source/index.html" then
+            key = "/"
+        end
+
+        if body then
+            source[key] = body
+        else
+            source[key] = "Not Found"
+        end
+    end
+end
+
 local function client_loop(fd)
     local interface = gen_interface("http", fd)
     if interface.init then
         interface.init()
     end
+
     local code, url, method, header, body = httpd.read_request(interface.read, nil)
-    --print("url:", url, "method:", method, "header:", header, "body:", body, "code:", code)
     if code then
         if code ~= 200 then
             response(fd, interface.write, code)
         else
-            if url == "/" then
-                local file, err = io.open("./source/index.html")
-                if not file then
-                    print(err)
-                return
-                end
-                local body = file:read("*all")
-                file:close()
-                response(fd, interface.write, 200, body)
-            elseif url == "/source/hpms.png" then
-                file, err = io.open("./source/hpms.png")
-                if not file then
-                    print(err)
-                return
-                end
-                local body = file:read("*all")
-                file:close()
-                response(fd, interface.write, 200, body)
-            elseif url == "/source/test1.png" then
-                file, err = io.open("./source/test1.png")
-                if not file then
-                    print(err)
-                return
-                end
-                local body = file:read("*all")
-                file:close()
-                response(fd, interface.write, 200, body)
-            elseif url == "/source/test2.png" then
-                file, err = io.open("./source/test2.png")
-                if not file then
-                    print(err)
-                return
-                end
-                local body = file:read("*all")
-                file:close()
+            local body = source[url]
+            if body then
                 response(fd, interface.write, 200, body)
             else
                 response(fd, interface.write, 200, "Not Found")
@@ -110,10 +110,9 @@ local function client_loop(fd)
     else
         if url == sockethelper.socket_error then
             print("socket closed")
-        else
-            print(url)
         end
     end
+
     if interface.close then
         interface.close()
     end
@@ -121,8 +120,8 @@ local function client_loop(fd)
 end
 
 evloop.start("0.0.0.0:8989", function (fd, ip, port)
-    --print("accept a connection:", fd, ip, port)
     socket.bind(fd, client_loop)
 end)
 
+init_source()
 evloop.run()
