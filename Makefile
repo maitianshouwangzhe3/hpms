@@ -11,7 +11,6 @@ default :
 LUA_CLIB_PATH ?= luaclib
 LUA_CLIB_SRC ?= lualib-src
 LUA_CLIB ?= hpms ltls
-LUA_INC_PATH ?= deps/luajit2/src
 HPMS_LIBS ?= -ldl -lm
 CORE_PATH ?= ./core
 
@@ -31,7 +30,20 @@ macosx : EXPORT :=
 JEMALLOC_STATICLIB := deps/jemalloc/lib/libjemalloc_pic.a
 JEMALLOC_INC := deps/jemalloc/include/jemalloc
 
-LUAJIT_STATICLIB := deps/luajit2/src/libluajit.a
+LUA_IMPL ?= lua
+
+# 根据 LUA_IMPL 设置编译/链接参数
+ifeq ($(LUA_IMPL),lua)
+	LUA_INC_PATH ?= deps/lua
+	LUA_STATICLIB := deps/lua/liblua.a
+	EXTRA_DEFS := -DUSE_LUA=1 -DUSE_LUAJIT=0
+else ifeq ($(LUA_IMPL),luajit)
+	LUA_INC_PATH ?= deps/luajit2/src
+	LUA_STATICLIB := deps/luajit2/src/libluajit.a
+	EXTRA_DEFS := -DUSE_LUA=0 -DUSE_LUAJIT=1
+else
+    $(error "LUA_IMPL must be 'lua' or 'luajit'")
+endif
 
 # dont use jemalloc in macosx
 macosx : JEMALLOC_STATICLIB :=
@@ -63,7 +75,7 @@ LUA_CLIB_HPMS = \
 	lua-core.c lsha1.c\
 	lua-buffer.c
 
-CFLAGS = -g -O2 -Wall -I$(LUA_INC_PATH)
+CFLAGS = -g -O2 -Wall -I$(LUA_INC_PATH) $(EXTRA_DEFS)
 
 NET_SRC = ae.c anet.c systime.c buffer.c hpms.c
 
@@ -76,7 +88,7 @@ all : \
 	hpms \
 	$(foreach v, $(LUA_CLIB), $(LUA_CLIB_PATH)/$(v).so)
 
-hpms : $(foreach v, $(NET_SRC), $(CORE_PATH)/$(v)) $(LUAJIT_STATICLIB) $(JEMALLOC_STATICLIB)
+hpms : $(foreach v, $(NET_SRC), $(CORE_PATH)/$(v)) $(LUA_STATICLIB) $(JEMALLOC_STATICLIB)
 	$(CC) $(CFLAGS) $^ -o $@ -I$(LUA_INC_PATH) -I$(JEMALLOC_INC) $(EXPORT) $(HPMS_LIBS) $(HPMS_DEFINE)
 
 $(LUA_CLIB_PATH) :
@@ -97,4 +109,4 @@ ifneq (,$(wildcard deps/jemalloc/Makefile))
 	cd deps/jemalloc && $(MAKE) clean && rm Makefile
 endif
 	cd deps/luajit2 && $(MAKE) clean MACOSX_DEPLOYMENT_TARGET=$(MACOSX_DEPLOYMENT_TARGET)
-	rm -f $(LUAJIT_STATICLIB)
+	rm -f $(LUA_STATICLIB)

@@ -1,7 +1,16 @@
 #include <lua.h>
 #include <stdio.h>
 #include "zvmalloc.h"
+
+#if USE_LUAJIT
 #include <luajit.h>
+#define LUA_IMPL_NAME "LuaJIT " LUAJIT_VERSION
+#elif USE_LUA
+#include <lua.h>
+#define LUA_IMPL_NAME "Lua " LUA_VERSION
+#else
+#error "Neither USE_LUA nor USE_LUAJIT defined"
+#endif
 #include <lualib.h>
 #include <lauxlib.h>
 
@@ -89,7 +98,7 @@ lua_inject_api(lua_State *L) {
 
 int main(int argc, char** argv) {
     lstate_t ud = {0, MEMLVL};
-    lua_State *L = lua_newstate(lua_alloc, &ud);
+    lua_State *L = lua_newstate(lua_alloc, &ud, 0);
     luaL_openlibs(L);
     lua_inject_api(L);
     if (argc > 1) {
