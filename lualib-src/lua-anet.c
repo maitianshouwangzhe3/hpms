@@ -1,7 +1,7 @@
 
 #include "anet.h"
-#include <lua.h>
-#include <lauxlib.h>
+#include "lua.h"
+#include "lauxlib.h"
 #include <arpa/inet.h>
 #include <stdbool.h>
 

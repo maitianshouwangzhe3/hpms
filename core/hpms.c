@@ -1,18 +1,9 @@
-#include <lua.h>
-#include <stdio.h>
-#include "zvmalloc.h"
 
-#if USE_LUAJIT
-#include <luajit.h>
-#define LUA_IMPL_NAME "LuaJIT " LUAJIT_VERSION
-#elif USE_LUA
-#include <lua.h>
-#define LUA_IMPL_NAME "Lua " LUA_VERSION
-#else
-#error "Neither USE_LUA nor USE_LUAJIT defined"
-#endif
-#include <lualib.h>
-#include <lauxlib.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
 
 #ifdef __linux__
     #include <sys/sendfile.h>

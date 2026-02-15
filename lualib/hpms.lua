@@ -1,7 +1,5 @@
 local core = require "hpms.core"
 
-local new_tab = require "table.new"
-
 local math_floor = math.floor
 
 local tab_remove = table.remove
@@ -165,7 +163,7 @@ local function safe_call_timer(func)
 end
 
 local function add_timer(csec, func)
-    local ele = new_tab(3, 0)
+    local ele = {}
     nele = nele+1
     ele[1], ele[2], ele[3] = nele, now_tick + csec, co_create(safe_call_timer(func))
     minheap[nele] = ele
