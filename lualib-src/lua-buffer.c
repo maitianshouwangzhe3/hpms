@@ -1,8 +1,8 @@
 
 #include <stdbool.h>
 #include <arpa/inet.h>
-#include <lua.h>
-#include <lauxlib.h>
+#include "lua.h"
+#include "lauxlib.h"
 #include "buffer.h"
 #include "anet.h"
 
