@@ -2,6 +2,8 @@
 #include "anet.h"
 #include "lua.h"
 #include "lauxlib.h"
+#include <unistd.h>
+#include <string.h>
 #include <arpa/inet.h>
 #include <stdbool.h>
 
@@ -101,6 +103,46 @@ ltcp_setopt(lua_State *L) {
     return 2;
 }
 
+static int sync_write(lua_State *L) {
+    int fd = luaL_checkinteger(L, 1);
+    const void *buf = lua_touserdata(L, 2);
+    int data_len = 0;
+    if (!lua_isnil(L, 3)) {
+        data_len = luaL_checkinteger(L, 3);
+    } else {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+    
+    unsigned char  buffer[2048] = {0};
+    uint32_t netLen = htonl(data_len);
+    memcpy(buffer, &netLen, sizeof(netLen));
+    memcpy(buffer + sizeof(netLen), buf, data_len);
+    int n = write(fd, buffer, data_len + sizeof(netLen));
+    if (n <= 0) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    lua_pushboolean(L, true);
+    lua_pushinteger(L, n);
+    return 2;
+}
+
+static int async_write(lua_State *L) {
+    int fd = luaL_checkinteger(L, 1);
+    size_t len = 0;
+    const char *buf = luaL_checklstring(L, 2, &len);
+    int n = write(fd, buf, len);
+    if (n <= 0) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    lua_pushboolean(L, true);
+    return 1;
+}
+
 static const struct luaL_Reg lib[] = {
     {"listen", llisten},
 
@@ -111,6 +153,8 @@ static const struct luaL_Reg lib[] = {
 
     {"getoption", ltcp_getopt},
     {"setoption", ltcp_setopt},
+    {"sync_send", sync_write},
+    {"async_send", async_write},
     {NULL, NULL}
 };
 

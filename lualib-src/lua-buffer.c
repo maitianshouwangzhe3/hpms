@@ -1,4 +1,5 @@
 
+#include <stdlib.h>
 #include <stdbool.h>
 #include <arpa/inet.h>
 #include "lua.h"
@@ -68,6 +69,24 @@ lwrite(lua_State *L) {
             break;
         }
     }
+    return 1;
+}
+
+static int async_write_binary(lua_State *L) {
+    buffer_t *p = (buffer_t *)luaL_checkudata(L, 1, "hpms.buffer");
+    const void* buf = lua_touserdata(L, 2);
+    size_t len = luaL_checkinteger(L, 3);
+    if (len <= 0) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    unsigned char  buffer[2048] = {0};
+    uint32_t netLen = htonl(len);
+    memcpy(buffer, &netLen, sizeof(netLen));
+    memcpy(buffer + sizeof(netLen), buf, len);
+    buffer_add(p, buffer, sizeof(netLen) + len);
+    lua_pushboolean(L, false);
     return 1;
 }
 
@@ -168,6 +187,7 @@ lnew (lua_State *L) {
         luaL_Reg m[] = {
             {"read", lread},
             {"write", lwrite},
+            {"async_write_binary", async_write_binary},
             {"readline", lreadline},
             {"readn", lreadn},
             {"flush", lflush},
